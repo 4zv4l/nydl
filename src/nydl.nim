@@ -1,6 +1,9 @@
 import std/[os,strformat,strutils]
 import commandeer
 
+# get yt-dlp in the binary itself
+const yt = readFile("yt")
+
 proc exec(cmd: string): string = 
   let output = getTempDir()/"ydl_out"
   let command = fmt"{cmd} > {output}"
@@ -61,4 +64,5 @@ elif sync:
   discard
 # no command provided
 else:
+  writeFile("myYT", yt)
   quit usage, 0
