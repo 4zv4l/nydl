@@ -6,6 +6,7 @@ Music library manager and downloader
 
 Might require python3 to run [yt-dlp](https://github.com/yt-dlp/yt-dlp).  
 Requires [fzf](https://github.com/junegunn/fzf) for the `rem` and `search` command.  
+Requires [ncmpcpp](https://github.com/ncmpcpp/ncmpcpp) if you don't modify the `MUSIC_PLAYER` env variable.
 
 ## usage
 
