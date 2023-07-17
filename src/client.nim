@@ -44,7 +44,7 @@ proc find_server_ip(): string =
 
 proc startClient*() =
   addHandler(newConsoleLogger())
-  let musics_path = getEnv("MUSICS_PATH", expandTilde("~/Music/Musics/*.mp3"))
+  let musics_path = getEnv("MUSICS_PATH", expandTilde("~/Music/Musics"))
   let ip = find_server_ip()
   let client = newSocket(buffered=false)
   client.connect(ip, Port(TCP_PORT))

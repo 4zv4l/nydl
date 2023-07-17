@@ -29,7 +29,7 @@ proc exec(cmd: string): string =
   removeFile(output)
 
 let
-  musics_path = getEnv("MUSICS", getHomeDir()/"Music"/"Musics")
+  musics_path = getEnv("MUSICS_PATH", expandTilde("~/Music/Musics"))
   default_player = getEnv("MUSIC_PLAYER", "ncmpcpp")
   usage = """
 Usage: ydl [COMMAND] [PARAMETERS]
@@ -81,7 +81,6 @@ elif rem:
 elif search:
   discard exec(fmt"ls {musics_path} | fzf")
 # act as client or server to sync musics
-# TODO
 elif sync:
   if action == "give": startServer()
   elif action == "get": startClient()
