@@ -4,7 +4,7 @@ import puppy
 import client
 import server
 
-# get yt-dlp in the binary itself
+# get yt-dlp if not found in the directory of nydl
 # return the path to yt-dlp
 proc download_yt_dlp(): string =
   let cwd = getAppDir()
