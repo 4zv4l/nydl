@@ -1,0 +1,47 @@
+import std/[net, logging, strformat, strutils]
+
+const
+  UDP_PORT = 6666
+  TCP_PORT = 6667
+
+
+proc download_file(conn: Socket, path: string) =
+  var size = parseUInt(conn.recvLine())
+  let mb_size = size div 1024 div 1024
+  info &"Downlading \"{path}\" of size {mb_size} mb"
+  #writeFile(path, conn.recv(size.int))
+  info &"Downloaded \"{path}\""
+
+# server discovery
+# client: ???
+# server: ydl ok
+# return server ip
+proc find_server_ip(): string =
+  info "Looking for server(s)"
+  var (ip, port) = ("255.255.255.255", Port(UDP_PORT))
+  var data: string
+  info fmt"Discovering on {ip}:{port}"
+  let client = newSocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+  client.setSockOpt(OptBroadcast, true)
+  while true:
+    debug "sending discovery message"
+    client.sendTo(ip, port, "???")
+    debug "sent discovery message"
+    debug "waiting for response"
+    discard client.recvFrom(data, 1024, ip, port)
+    debug fmt"got response: {data}"
+    if data == "ydl ok":
+      info fmt"Found a server at {ip}"
+      return ip
+
+proc startClient*() =
+  addHandler(newConsoleLogger())
+  let ip = find_server_ip()
+  let client = newSocket(buffered=false)
+  client.connect(ip, Port(TCP_PORT))
+  info "Connected to {ip}:{TCP_PORT}"
+  var counter = 0
+  while (var path = client.recvLine(); path != ""):
+    download_file(client, path)
+    counter += 1
+  info fmt"Done downloading {counter} musics :)"
