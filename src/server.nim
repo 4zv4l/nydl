@@ -10,8 +10,11 @@ const
 # server: send(file, size)
 proc upload_file(conn: Socket, path: string) =
   conn.send(extractFilename(path) & "\n")
+  info &"sent path {extractFilename(path)}"
   conn.send($getFileSize(path) & "\n")
-  #conn.send(readFile(path))
+  info &"sent size {getFileSize(path)}"
+  conn.send(readFile(path))
+  info &"sent music"
 
 # client discovery
 # client: ???
@@ -37,7 +40,7 @@ proc startServer*() =
   spawn client_discovert()
   # handle TCP client download
   addHandler(newConsoleLogger())
-  let musics_path = expandTilde("~/Music/Musics/*.mp3")
+  let musics_path = getEnv("MUSICS_PATH", expandTilde("~/Music/Musics/*.mp3"))
   let (ip, port) = ("0.0.0.0", Port(TCP_PORT))
   let server = newSocket(buffered=false)
   server.setSockOpt(OptReuseAddr, true)
@@ -51,6 +54,7 @@ proc startServer*() =
     var (client_ip, client_port) = client.getPeerAddr()
     info fmt"Got a client at {client_ip}:{client_port}"
     for music in walkPattern(musics_path):
-      upload_file(client, music)
+      try: upload_file(client, music)
+      except: break
     client.close
     info "Done with client :)"
