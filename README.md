@@ -4,7 +4,8 @@ Music library manager and downloader
 
 ## requirement
 
-Might require python3 to run [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+Might require python3 to run [yt-dlp](https://github.com/yt-dlp/yt-dlp).  
+Requires [fzf](https://github.com/junegunn/fzf) for the `rem` and `search` command.  
 
 ## usage
 
