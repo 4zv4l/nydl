@@ -47,7 +47,7 @@ proc startClient*() =
   let ip = find_server_ip()
   let client = newSocket(buffered=false)
   client.connect(ip, Port(TCP_PORT))
-  info "Connected to {ip}:{TCP_PORT}"
+  info fmt"Connected to {ip}:{TCP_PORT}"
   var counter = 0
   while (var path = client.recvLine(); path != ""):
     download_file(client, musics_path/path)
