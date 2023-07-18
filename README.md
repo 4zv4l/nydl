@@ -19,7 +19,7 @@ Commands:
   rem              # remove music by name using fzf
   search           # search for music in the library
   sync [get/give]  # sync the music with the server
-  help [COMMAND]   # Describe available commands or one specific command
+  help             # show this help
 ```
 
 - `MUSICS_PATH` env variable to set the music library path
