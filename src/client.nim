@@ -32,7 +32,7 @@ proc send_discovery(client: AsyncSocket, ip: string, port: Port) {.async.} =
 proc find_server_ip(): string =
   info "Looking for server(s)"
   var (ip, port) = ("255.255.255.255", Port(UDP_PORT))
-  info fmt"Discovering on {ip}:{port}"
+  info &"Discovering on {ip}:{port}"
   let client = newAsyncSocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
   client.setSockOpt(OptBroadcast, true)
   while true:
@@ -41,19 +41,24 @@ proc find_server_ip(): string =
     debug "sent discovery message"
     debug "waiting for response"
     let infos = waitFor client.recvFrom("ydl ok".len)
-    debug fmt"got response: {infos.data}"
+    debug &"got response: {infos.data}"
     if infos.data == "ydl ok":
-      info fmt"Found a server at {infos.address}"
+      info &"Found a server at {infos.address}"
       return infos.address
 
 proc startClient*() =
   let musics_path = getEnv("MUSICS_PATH", expandTilde("~/Music/Musics"))
+  info &"Source directory is {musics_path}"
+  if not dirExists(musics_path):
+    createDir(musics_path)
+    info &"Created {musics_path} because it didn't exist"
   let ip = find_server_ip()
   let client = newSocket(buffered=false)
+  info &"Connecting to {ip}:{TCP_PORT}"
   client.connect(ip, Port(TCP_PORT))
-  info fmt"Connected to {ip}:{TCP_PORT}"
+  info &"Connected to {ip}:{TCP_PORT}"
   var counter = 0
   while (var path = client.recvLine(); path != ""):
     download_file(client, musics_path/path)
     counter += 1
-  info fmt"Done downloading {counter} musics :)"
+  info &"Done downloading {counter} musics :)"

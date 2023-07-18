@@ -24,7 +24,7 @@ proc download_yt_dlp(): string =
 # execute shell commande and return stdout
 proc exec(cmd: string): string = 
   let output = getTempDir()/"ydl_out"
-  let command = fmt"{cmd} > {output}"
+  let command = &"{cmd} > {output}"
   discard execShellCmd(command)
   result = readFile(output)
   removeFile(output)
@@ -68,9 +68,9 @@ if play:
 elif add:
   try:
     let yt = download_yt_dlp()
-    info fmt"Downloading {url}"
-    if exec(fmt"{yt} -x --audio-format mp3 {url}").contains("generic"): raise
-    info fmt"Downloaded {url}"
+    info &"Downloading {url}"
+    if exec(&"{yt} -x --audio-format mp3 {url}").contains("generic"): raise
+    info &"Downloaded {url}"
     var file = exec("ls *.mp3")
     file.removeSuffix()
     moveFile(file, musics_path/file)
@@ -79,14 +79,14 @@ elif add:
     quit "Couldn't download music :("
 # remove a music from the library
 elif rem:
-  var to_delete = exec(fmt"ls {musics_path} | fzf")
+  var to_delete = exec(&"ls {musics_path} | fzf")
   to_delete.removeSuffix()
   if to_delete != "":
     removeFile(musics_path/to_delete)
     info &"Deleted \"{to_delete}\" with success :)"
 # simple search through musics
 elif search:
-  discard exec(fmt"ls {musics_path} | fzf")
+  discard exec(&"ls {musics_path} | fzf")
 # act as client or server to sync musics
 elif sync:
   if action == "give": startServer()
