@@ -1,4 +1,4 @@
-import std/[net, os, logging, strformat, strutils]
+import std/[net, asyncnet, asyncdispatch, os, logging, strformat, strutils]
 
 const
   UDP_PORT = 6666
@@ -24,23 +24,27 @@ proc download_file(conn: Socket, path: string) =
 # client: ???
 # server: ydl ok
 # return server ip
+proc send_discovery(client: AsyncSocket, ip: string, port: Port) {.async.} =
+  while true:
+    asyncCheck client.sendTo(ip, port, "???")
+    info "Sent discovery broadcast"
+    await sleepAsync(1_000)
 proc find_server_ip(): string =
   info "Looking for server(s)"
   var (ip, port) = ("255.255.255.255", Port(UDP_PORT))
-  var data: string
   info fmt"Discovering on {ip}:{port}"
-  let client = newSocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+  let client = newAsyncSocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
   client.setSockOpt(OptBroadcast, true)
   while true:
     debug "sending discovery message"
-    client.sendTo(ip, port, "???")
+    asyncCheck send_discovery(client, ip, port)
     debug "sent discovery message"
     debug "waiting for response"
-    discard client.recvFrom(data, 1024, ip, port)
-    debug fmt"got response: {data}"
-    if data == "ydl ok":
-      info fmt"Found a server at {ip}"
-      return ip
+    let infos = waitFor client.recvFrom("ydl ok".len)
+    debug fmt"got response: {infos.data}"
+    if infos.data == "ydl ok":
+      info fmt"Found a server at {infos.address}"
+      return infos.address
 
 proc startClient*() =
   let musics_path = getEnv("MUSICS_PATH", expandTilde("~/Music/Musics"))
