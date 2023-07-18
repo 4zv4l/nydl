@@ -27,7 +27,7 @@ proc download_file(conn: Socket, path: string) =
 proc send_discovery(client: AsyncSocket, ip: string, port: Port) {.async.} =
   while true:
     asyncCheck client.sendTo(ip, port, "???")
-    info "Sent discovery broadcast"
+    debug "Sent discovery broadcast"
     await sleepAsync(1_000)
 proc find_server_ip(): string =
   info "Looking for server(s)"
