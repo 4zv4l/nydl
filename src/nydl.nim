@@ -16,6 +16,7 @@ proc download_yt_dlp(): string =
     let yt_url = url & "yt-dlp"
     let yt_path = cwd/"yt-dlp"
   if not fileExists(yt_path):
+    info "Downloading yt-dlp since it is not found"
     writeFile(yt_path, fetch(yt_url))
     setFilePermissions(yt_path, {fpUserRead,fpUserWrite,fpUserExec})
   return yt_path
