@@ -35,11 +35,10 @@ proc client_discovert() =
     server.sendTo(ip, port, "ydl ok")
     info &"Sent discovery to client at {ip}:{port}"
 
-proc startServer*() =
+proc startServer*(musics_path: string) =
   # handle UDP client discovery
   spawn client_discovert()
   # handle TCP client download
-  let musics_path = getEnv("MUSICS_PATH", expandTilde("~/Music/Musics"))
   let (ip, port) = ("0.0.0.0", Port(TCP_PORT))
   let server = newSocket(buffered=false)
   server.setSockOpt(OptReuseAddr, true)

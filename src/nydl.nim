@@ -90,8 +90,8 @@ elif search:
   discard exec(&"ls {musics_path} | fzf")
 # act as client or server to sync musics
 elif sync:
-  if action == "give": startServer()
-  elif action == "get": startClient()
+  if action == "give": startServer(musics_path)
+  elif action == "get": startClient(musics_path)
   else: quit usage, 1
 # no command provided
 else:

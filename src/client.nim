@@ -46,8 +46,7 @@ proc find_server_ip(): string =
       info &"Found a server at {infos.address}"
       return infos.address
 
-proc startClient*() =
-  let musics_path = getEnv("MUSICS_PATH", expandTilde("~/Music/Musics"))
+proc startClient*(musics_path: string) =
   info &"Source directory is {musics_path}"
   if not dirExists(musics_path):
     createDir(musics_path)
