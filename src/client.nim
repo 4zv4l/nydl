@@ -43,7 +43,6 @@ proc find_server_ip(): string =
       return ip
 
 proc startClient*() =
-  addHandler(newConsoleLogger())
   let musics_path = getEnv("MUSICS_PATH", expandTilde("~/Music/Musics"))
   let ip = find_server_ip()
   let client = newSocket(buffered=false)

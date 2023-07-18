@@ -39,7 +39,6 @@ proc startServer*() =
   # handle UDP client discovery
   spawn client_discovert()
   # handle TCP client download
-  addHandler(newConsoleLogger())
   let musics_path = getEnv("MUSICS_PATH", expandTilde("~/Music/Musics/*.mp3"))
   let (ip, port) = ("0.0.0.0", Port(TCP_PORT))
   let server = newSocket(buffered=false)
