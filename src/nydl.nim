@@ -19,6 +19,7 @@ proc download_yt_dlp(): string =
     info "Downloading yt-dlp since it is not found"
     writeFile(yt_path, fetch(yt_url))
     setFilePermissions(yt_path, {fpUserRead,fpUserWrite,fpUserExec})
+    info &"Downloaded to {yt_path}"
   return yt_path
 
 # execute shell commande and return stdout
