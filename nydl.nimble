@@ -1,5 +1,5 @@
 # Package
-version       = "0.1.0"
+version       = "0.3.0"
 author        = "azz"
 description   = "Musics library manager"
 license       = "GPL-3.0-or-later"
