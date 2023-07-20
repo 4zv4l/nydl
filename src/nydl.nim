@@ -44,6 +44,12 @@ Commands:
   sync [get/give]  # sync the music with the server
   help             # show this help"""
 
+# create Music path
+try:
+  createDir(musics_path)
+except CatchableError as e:
+  quit e.msg
+
 commandline:
   # start ncmpcpp
   subcommand play, "play": discard
@@ -74,10 +80,12 @@ elif add:
     info &"Downloaded {url}"
     var file = exec("ls *.mp3")
     file.removeSuffix()
+    info &"Mp3: {file}"
     moveFile(file, musics_path/file)
+    info &"Moving \"{file}\" to \"{musics_path/file}\""
     info &"\"{file}\" added to the library with success :)"
-  except:
-    quit "Couldn't download music :("
+  except CatchableError as e:
+    quit &"Couldn't download music: {e.msg} :("
 # remove a music from the library
 elif rem:
   var to_delete = exec(&"ls {musics_path} | fzf")
