@@ -53,7 +53,8 @@ if play:
 elif add:
   try:
     info &"Downloading {url}"
-    if exec(&"yt-dlp -x --audio-format mp3 {url}").contains("generic"): raise
+    if exec(&"yt-dlp -x --audio-format mp3 {url}").contains("generic"):
+      raise newException(ValueError,"wrong url")
     info &"Downloaded {url}"
     var file = exec("ls *.mp3")
     file.removeSuffix()
