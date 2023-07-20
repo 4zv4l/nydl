@@ -1,26 +1,7 @@
 import std/[os,strformat,strutils,logging]
 import commandeer
-import puppy
 import client
 import server
-
-# get yt-dlp if not found in the directory of nydl
-# return the path to yt-dlp
-proc download_yt_dlp(): string =
-  let cwd = getAppDir()
-  const url = "https://github.com/yt-dlp/yt-dlp/releases/download/2023.07.06/"
-  when defined(windows) and defined(x86_64):
-    let yt_url = url & "yt-dlp.exe"
-    let yt_path = cwd/"yt-dlp.exe"
-  when defined(linux) and defined(x86_64):
-    let yt_url = url & "yt-dlp"
-    let yt_path = cwd/"yt-dlp"
-  if not fileExists(yt_path):
-    info "Downloading yt-dlp since it is not found"
-    writeFile(yt_path, fetch(yt_url))
-    setFilePermissions(yt_path, {fpUserRead,fpUserWrite,fpUserExec})
-    info &"Downloaded to {yt_path}"
-  return yt_path
 
 # execute shell commande and return stdout
 proc exec(cmd: string): string = 
@@ -45,10 +26,7 @@ Commands:
   help             # show this help"""
 
 # create Music path
-try:
-  createDir(musics_path)
-except CatchableError as e:
-  quit e.msg
+createDir(musics_path)
 
 commandline:
   # start ncmpcpp
@@ -74,9 +52,8 @@ if play:
 # download music from youtube
 elif add:
   try:
-    let yt = download_yt_dlp()
     info &"Downloading {url}"
-    if exec(&"{yt} -x --audio-format mp3 {url}").contains("generic"): raise
+    if exec(&"yt-dlp -x --audio-format mp3 {url}").contains("generic"): raise
     info &"Downloaded {url}"
     var file = exec("ls *.mp3")
     file.removeSuffix()
