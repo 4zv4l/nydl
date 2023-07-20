@@ -10,4 +10,3 @@ bin           = @["nydl"]
 # Dependencies
 requires "nim >= 1.6.14"
 requires "commandeer"
-requires "puppy"
