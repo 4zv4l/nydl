@@ -35,11 +35,11 @@ proc find_server_ip(): string =
   info &"Discovering on {ip}:{port}"
   let client = newAsyncSocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
   client.setSockOpt(OptBroadcast, true)
+  debug "sending discovery message"
+  asyncCheck send_discovery(client, ip, port)
+  debug "sent discovery message"
+  debug "waiting for response"
   while true:
-    debug "sending discovery message"
-    asyncCheck send_discovery(client, ip, port)
-    debug "sent discovery message"
-    debug "waiting for response"
     let infos = waitFor client.recvFrom("ydl ok".len)
     debug &"got response: {infos.data}"
     if infos.data == "ydl ok":
@@ -52,6 +52,10 @@ proc startClient*(musics_path: string) =
     createDir(musics_path)
     info &"Created {musics_path} because it didn't exist"
   let ip = find_server_ip()
+  stdout.write "Download library from {ip} ?"
+  case stdin.readline
+  of "y","Y","yes","YES": discard
+  else: quit "Abort download"
   let client = newSocket(buffered=false)
   info &"Connecting to {ip}:{TCP_PORT}"
   client.connect(ip, Port(TCP_PORT))
